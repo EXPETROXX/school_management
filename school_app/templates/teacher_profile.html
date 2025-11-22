@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Teacher Profile</title>
+
+  <!-- Bootstrap 4.3 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --accent: #5A73D8;
+      --accent-2: #70C6E4;
+      --btn-grad-1: #ffd166;
+      --btn-grad-2: #f77f00;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      padding: 30px 18px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+      box-sizing: border-box;
+      z-index: 2;
+      min-height: 100vh;
+    }
+    .sidebar img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+    .sidebar h4 {
+      margin: 12px 0 6px;
+      font-weight: 600;
+    }
+    .sidebar p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .sidebar a {
+      margin-top: 8px;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+      font-weight: 600;
+      display: block;
+    }
+    .sidebar a:hover {
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 40px 30px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .profile-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      margin-bottom: 2rem;
+      color: #212529;
+      text-align: center;
+    }
+    .profile-header p {
+      margin: 0.3rem 0;
+      font-weight: 500;
+    }
+
+    h3 {
+      color: white;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Student Cards Grid */
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .student-card {
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: white;
+    }
+
+    .student-card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .card-front {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #212529;
+    }
+
+    .card-back {
+      background-color: var(--accent);
+      color: white;
+      transform: rotateY(180deg);
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .card-back p {
+      margin: 0.3rem 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 520px) {
+      .sidebar {
+        display: none;
+      }
+      .main {
+        padding: 20px 15px;
+      }
+      .students-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Teacher Avatar" />
+    <h4>{{ teacher.teacher_id.first_name }} {{ teacher.teacher_id.last_name }}</h4>
+    <p>{{ teacher.department_id.department_name }}</p>
+
+    <a href="{% url 'teacher_profile_edit' %}">Edit Profile</a>
+    <a href="{% url 'log_out' %}" style="margin-top: 8px; border-color: #dc3545; color:#dc3545;">
+      Logout
+    </a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="profile-header">
+      <h2>Teacher Profile</h2>
+      <p><strong>Name:</strong> {{ teacher.teacher_id.first_name }} {{ teacher.teacher_id.last_name }}</p>
+      <p><strong>Email:</strong> {{ teacher.teacher_id.email }}</p>
+      <p><strong>Department:</strong> {{ teacher.department_id.department_name }}</p>
+      <p><strong>Phone:</strong> {{ teacher.phone }}</p>
+      <p><strong>Age:</strong> {{ teacher.age }}</p>
+    </div>
+
+    <h3>Students in Your Department</h3>
+
+    {% if students %}
+    <div class="students-grid">
+      {% for student in students|dictsort:"student_id.first_name" %}
+      <div class="student-card">
+        <div class="card-inner">
+          <div class="card-front">
+            {{ student.student_id.first_name }} {{ student.student_id.last_name }}
+          </div>
+          <div class="card-back">
+            <p><strong>Name:</strong> {{ student.student_id.first_name }} {{ student.student_id.last_name }}</p>
+            <p><strong>Email:</strong> {{ student.student_id.email }}</p>
+            <p><strong>Phone:</strong> {{ student.phone }}</p>
+            <p><strong>Admission No:</strong> {{ student.admission_number }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p style="color:white;">No students found in your department.</p>
+    {% endif %}
+  </div>
+
+  <!-- Bootstrap 4.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

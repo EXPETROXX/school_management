@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Teacher View</title>
+
+  <!-- Bootstrap -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+  />
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      /* Soft gradient background */
+      background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+      color: #212529;
+      margin: 0;
+      padding-top: 80px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #2c3e50;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      padding: 15px 30px;
+    }
+
+    .navbar-brand {
+      color: #ecf0f1 !important;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+
+    .nav-link {
+      color: #ecf0f1 !important;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .btn-logout {
+      background: #c0392b;
+      border: none;
+      border-radius: 25px;
+      padding: 8px 18px;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: #922b21;
+    }
+
+    /* Container - Teacher Management card */
+    .container {
+      background: #f9fbfe; /* very light blueish white */
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(41, 128, 185, 0.15);
+      transition: background-color 0.3s ease;
+    }
+
+    h1,
+    h3 {
+      text-align: center;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 40px;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      margin: 60px 0 40px;
+      border-bottom: 2px solid #bdc3c7;
+      text-align: center;
+    }
+
+    .section-divider span {
+      background: #ffffff;
+      padding: 0 20px;
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.2rem;
+    }
+
+    /* Card Flip Container */
+    .teacher-card {
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      text-align: center;
+      transition: transform 0.7s ease;
+      transform-style: preserve-3d;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(44, 62, 80, 0.1);
+      background: #ffffff;
+    }
+
+    .teacher-card:hover .card-inner,
+    .teacher-card.active .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Card Faces */
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 15px;
+    }
+
+    /* Front Face */
+    .card-front {
+      background-color: #2980b9;
+      color: #ecf0f1;
+      box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
+    }
+
+    .teacher-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #3498db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 600;
+      color: #ecf0f1;
+      margin-bottom: 20px;
+      user-select: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .teacher-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    /* Back Face */
+    .card-back {
+      background-color: #ecf0f1;
+      color: #2c3e50;
+      transform: rotateY(180deg);
+      box-shadow: 0 6px 12px rgba(44, 62, 80, 0.1);
+      font-size: 0.95rem;
+      line-height: 1.4;
+      user-select: none;
+    }
+
+    .card-back p {
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background-color: #27ae60;
+      color: white;
+    }
+
+    .badge-warning {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .btn-success {
+      background-color: #27ae60;
+      border: none;
+    }
+
+    .btn-success:hover {
+      background-color: #1e8449;
+    }
+
+    .btn-danger {
+      background-color: #c0392b;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #922b21;
+    }
+
+    /* Responsive spacing */
+    @media (max-width: 767.98px) {
+      .card-inner {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <a class="navbar-brand" href="#">Admin Panel</a>
+    <div class="ml-auto">
+      <a href="/admin_page/" class="nav-link d-inline-block mr-3">Home</a>
+      <a href="/admin_teacher_view/" class="nav-link d-inline-block mr-3">Teachers</a>
+      <a href="/admin_student_view/" class="nav-link d-inline-block mr-3">Students</a>
+      <a href="{% url 'log_out' %}" class="btn btn-logout">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <h1>Teacher Management</h1>
+
+    {% if data %}
+    <!-- Approved Teachers -->
+    <div class="section-divider"><span>Approved Teachers</span></div>
+    <div class="row">
+      {% for i in data %}
+        {% if i.teacher_id.is_active %}
+          <div class="col-md-4 mb-4">
+            <div class="teacher-card" tabindex="0">
+              <div class="card-inner">
+                <div class="card-front">
+                  <div class="teacher-avatar">
+                    {{ i.teacher_id.first_name|slice:":1" }}{{ i.teacher_id.last_name|slice:":1" }}
+                  </div>
+                  <div class="teacher-name">{{ i.teacher_id.first_name }} {{ i.teacher_id.last_name }}</div>
+                </div>
+                <div class="card-back">
+                  <p><strong>Email:</strong> {{ i.teacher_id.email }}</p>
+                  <p><strong>Age:</strong> {{ i.age }}</p>
+                  <p><strong>Phone:</strong> {{ i.phone }}</p>
+                  <p><strong>Department:</strong> {{ i.department_id.department_name }}</p>
+                  <p><strong>Status:</strong> <span class="badge badge-success">Active</span></p>
+                  <p class="text-success font-weight-bold">✓ Approved</p>
+                  <a
+                    href="{% url 'admin_teacher_view' %}?delete={{ i.id }}"
+                    class="btn btn-danger btn-sm mt-2"
+                    onclick="return confirm('Are you sure you want to delete this approved teacher? This will permanently delete the teacher data.')"
+                  >
+                    Delete
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Pending Teachers -->
+    <div class="section-divider"><span>Pending Approval Requests</span></div>
+    <div class="row">
+      {% for i in data %}
+        {% if not i.teacher_id.is_active %}
+          <div class="col-md-4 mb-4">
+            <div class="teacher-card" tabindex="0">
+              <div class="card-inner" style="border: 1px solid #f39c12; box-shadow: 0 0 15px #f39c12;">
+                <div class="card-front" style="background-color: #f39c12; color: white;">
+                  <div class="teacher-avatar" style="background-color: #e67e22;">
+                    {{ i.teacher_id.first_name|slice:":1" }}{{ i.teacher_id.last_name|slice:":1" }}
+                  </div>
+                  <div class="teacher-name">{{ i.teacher_id.first_name }} {{ i.teacher_id.last_name }}</div>
+                </div>
+                <div class="card-back" style="background-color: #fff3e0; color: #b45f00;">
+                  <p><strong>Email:</strong> {{ i.teacher_id.email }}</p>
+                  <p><strong>Age:</strong> {{ i.age }}</p>
+                  <p><strong>Phone:</strong> {{ i.phone }}</p>
+                  <p><strong>Department:</strong> {{ i.department_id.department_name }}</p>
+                  <p><strong>Status:</strong> <span class="badge badge-warning">Pending</span></p>
+                  <div class="mt-3">
+                    <a
+                      href="{% url 'admin_teacher_view' %}?approve={{ i.id }}"
+                      class="btn btn-success btn-sm mr-2"
+                    >Approve</a>
+                    <a
+                      href="{% url 'admin_teacher_view' %}?reject={{ i.id }}"
+                      class="btn btn-danger btn-sm"
+                      onclick="return confirm('Are you sure you want to reject this teacher? This will permanently delete the teacher data.')"
+                    >Reject</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="alert alert-info text-center mt-4">No teachers found.</div>
+    {% endif %}
+
+    <div class="mt-4 text-center">
+      <a href="{% url 'admin_page' %}" class="btn btn-outline-secondary px-4 mr-2">Back to Admin</a>
+      <a href="{% url 'admin_teacher_view' %}" class="btn btn-primary px-4">Add New Teacher</a>
+    </div>
+  </div>
+
+  <script>
+    // Enable keyboard focus and toggle flip on enter or click
+    document.querySelectorAll('.teacher-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('active');
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.classList.toggle('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

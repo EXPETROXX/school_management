@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Profile</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{ --accent:#5A73D8; --accent-2:#70C6E4; --btn-grad-1:#ffd166; --btn-grad-2:#f77f00; }
+
+    html,body{ height:100%; margin:0; font-family:"Poppins",sans-serif; }
+
+    body {
+      display:flex;
+      min-height:100vh;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      overflow:hidden; /* prevents scroll when button jumps to edges */
+    }
+
+    /* Sidebar (left) */
+    .sidebar {
+      width:250px;
+      padding:30px 18px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      box-sizing:border-box;
+      z-index: 2;
+    }
+    .sidebar img { width:120px; height:120px; border-radius:50%; border:3px solid #fff; object-fit:cover; }
+    .sidebar h4 { margin:12px 0 6px; font-weight:600; }
+    .sidebar p { margin:0; opacity:0.9; font-size:14px; }
+    .sidebar a {
+      margin-top:18px;
+      color:#fff;
+      text-decoration:none;
+      padding:8px 18px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.2);
+      transition:all .2s;
+    }
+    .sidebar a:hover { background:#fff; color:var(--accent); }
+
+    /* Main content */
+    .main {
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px;
+      box-sizing:border-box;
+      position:relative;
+    }
+
+    .form-card {
+      width:100%;
+      max-width:720px;
+      background:#fff;
+      padding:34px;
+      border-radius:14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      z-index:1;
+      box-sizing:border-box;
+    }
+
+    .form-card h2 { text-align:center; margin-bottom:22px; color:#333; font-weight:600; }
+
+    /* Minimal inputs */
+    .form-control {
+      border: none;
+      border-bottom: 2px solid #ddd;
+      border-radius: 0;
+      padding-left:0.5rem;
+      padding-right:0.5rem;
+      box-shadow: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .form-control:focus {
+      outline:none;
+      border-bottom-color: var(--accent);
+      box-shadow:none;
+    }
+    label { color:#555; font-weight:500; font-size:0.95rem; }
+
+    /* Buttons: use fixed positioning so they don't affect layout when moving */
+    .action-btn {
+      position: fixed;
+      z-index: 9999; /* on top of everything */
+      padding: 10px 18px;
+      border-radius: 28px;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      transition: transform .12s ease, box-shadow .12s ease;
+      background: linear-gradient(135deg, var(--btn-grad-1), var(--btn-grad-2));
+      color:#fff;
+      user-select:none;
+    }
+    .action-btn:active { transform: scale(.98); }
+
+    /* Cancel button also fixed but stays bottom-right */
+    .cancel-btn {
+      position: fixed;
+      right:28px;
+      bottom:28px;
+      z-index:9998;
+      padding:10px 16px;
+      border-radius:28px;
+      background:#6c757d;
+      color:#fff;
+      border:none;
+      font-weight:600;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.14);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+    }
+
+    /* small screens: ensure button doesn't go off-screen */
+    @media (max-width:520px){
+      .sidebar{ display:none; } /* keep it simple on tiny screens */
+      .form-card{ margin: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" aria-hidden="false">
+    <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="avatar">
+    <h4>{{ student.student_id.first_name }} {{ student.student_id.last_name }}</h4>
+    <p>{{ student.department_id.department_name }}</p>
+    <a href="{% url 'student_profile' %}">Back to Profile</a>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="form-card" id="formCard">
+      <h2>Edit Your Profile</h2>
+      <form id="profileForm" method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="first_name">First name</label>
+            <input id="first_name" name="first_name" class="form-control" value="{{ student.student_id.first_name }}" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="last_name">Last name</label>
+            <input id="last_name" name="last_name" class="form-control" value="{{ student.student_id.last_name }}" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" class="form-control" value="{{ student.student_id.email }}" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" class="form-control" value="{{ student.phone }}" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" class="form-control" value="{{ student.age }}" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="admission">Admission No.</label>
+            <input id="admission" name="admission_number" class="form-control" value="{{ student.admission_number|default:'' }}">
+          </div>
+        </div>
+
+        <!-- hidden submit to allow form submission via JS when button is stationary -->
+        <button type="submit" id="hiddenSubmit" style="display:none;"></button>
+      </form>
+    </div>
+  </div>
+
+
+  <button id="updateBtn" class="action-btn" aria-label="Update profile">Update</button>
+
+ 
+
+  <script>
+    (function(){
+      const form = document.getElementById('profileForm');
+      const updateBtn = document.getElementById('updateBtn');
+      const hiddenSubmit = document.getElementById('hiddenSubmit');
+
+      const requiredSelectors = 'input[required]';
+      const requiredInputs = () => Array.from(form.querySelectorAll(requiredSelectors));
+
+      // place updateBtn initially centred near bottom of form-card
+      function placeBtnCenter() {
+        // compute bounding box near center-bottom of form card
+        const card = document.getElementById('formCard').getBoundingClientRect();
+        const btnW = updateBtn.offsetWidth;
+        const left = card.left + (card.width/2) - (btnW/2);
+        const top = card.top + card.height + 14; // slightly below card
+        updateBtn.style.left = Math.max(8, Math.min(window.innerWidth - btnW - 8, left)) + 'px';
+        updateBtn.style.top = Math.max(8, Math.min(window.innerHeight - updateBtn.offsetHeight - 8, top)) + 'px';
+      }
+
+      // check if all required fields filled
+      function allFilled() {
+        return requiredInputs().every(inp => inp.value.trim() !== '');
+      }
+
+      // move button to random safe location within viewport (avoid overlapping very edges)
+      function moveBtnRandom() {
+        const btnW = updateBtn.offsetWidth;
+        const btnH = updateBtn.offsetHeight;
+        const padding = 16; // leave margin from edges
+        const maxX = window.innerWidth - btnW - padding;
+        const maxY = window.innerHeight - btnH - padding;
+
+        const x = Math.floor(Math.random() * (Math.max(1, maxX - padding))) + padding;
+        const y = Math.floor(Math.random() * (Math.max(1, maxY - padding))) + padding;
+
+        // animate with smooth transition
+        updateBtn.style.transition = 'left 240ms ease, top 240ms ease';
+        updateBtn.style.left = x + 'px';
+        updateBtn.style.top = y + 'px';
+      }
+
+      // when inputs change, if all filled then allow click; else button will run
+      function handleInputs() {
+        if (allFilled()) {
+          // place back to center-bottom of form card
+          updateBtn.style.transition = 'left 200ms ease, top 200ms ease';
+          placeBtnCenter();
+          updateBtn.dataset.locked = 'true';
+        } else {
+          updateBtn.dataset.locked = 'false';
+        }
+      }
+
+      // when user mouse moves over page, attempt to hover/click: if not filled, move button
+      document.addEventListener('mousemove', (e) => {
+        // only run when required not filled
+        if (!allFilled()) {
+          // if cursor is close to button (within 120px), move button
+          const rect = updateBtn.getBoundingClientRect();
+          const dx = e.clientX - (rect.left + rect.width/2);
+          const dy = e.clientY - (rect.top + rect.height/2);
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140) {
+            moveBtnRandom();
+          }
+        }
+      });
+
+      // click behavior: if all filled -> submit; else prevent click and move
+      updateBtn.addEventListener('click', (ev) => {
+        if (allFilled()) {
+          // submit form
+          hiddenSubmit.click();
+        } else {
+          ev.preventDefault();
+          moveBtnRandom();
+        }
+      });
+
+      // keyboard accessibility: Enter inside form should submit only when all fields filled
+      form.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' && allFilled()) {
+          // allow normal submission
+          return;
+        }
+        if (ev.key === 'Enter') ev.preventDefault();
+      });
+
+      // attach input events
+      requiredInputs().forEach(inp => {
+        inp.addEventListener('input', handleInputs);
+      });
+
+      // recalc button position on resize
+      window.addEventListener('resize', () => {
+        handleInputs();
+        if (allFilled()) placeBtnCenter();
+      });
+
+      // initial placement
+      // ensure button has some size before we place
+      window.addEventListener('load', () => {
+        // small timeout to allow fonts/layout settle
+        setTimeout(() => {
+          handleInputs();
+          if (allFilled()) updateBtn.dataset.locked = 'true';
+          placeBtnCenter();
+        }, 120);
+      });
+
+      // ensure the button is focusable for keyboard users
+      updateBtn.setAttribute('tabindex','0');
+
+    })();
+  </script>
+</body>
+</html>

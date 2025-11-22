@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous">
+    <title>Department Management</title>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .navbar-brand { color: #ffd700 !important; font-weight: 600; }
+        .container {
+            background: #fff;
+            color: #333;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 80px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 0.6s ease;
+        }
+        input[type="text"], input[type="submit"] {
+            border-radius: 8px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            background: #764ba2; color: #fff; border: none; cursor: pointer;
+        }
+        input[type="submit"]:hover { background: #5e3d8c; }
+        .table thead { background: #444; color: #fff; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: none;} }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark fixed-top">
+        <a class="navbar-brand ml-3" href="/admin_page/">🏫 Admin Panel</a>
+        <a href="{% url 'log_out' %}" class="btn btn-outline-light mr-3">🚪 Logout</a>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-center mb-4">Department Management</h1>
+
+        <!-- Add Department -->
+        <form action="" method="post" class="text-center mb-4">
+            {% csrf_token %}
+            <label><strong>Department Name:</strong></label>
+            <input type="text" name="dept" required>
+            <input type="submit" value="Submit">
+        </form>
+
+        <!-- Department List -->
+        <table class="table table-striped table-bordered text-center">
+            <thead>
+                <tr><th>Department Name</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% if dept_data %}
+                    {% for i in dept_data %}
+                    <tr>
+                        <td>{{ i.department_name }}</td>
+                        <td>
+                            <a href="{% url 'delete_department' i.id %}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Delete this department?')">
+                               Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="2">No departments found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'admin_page' %}" class="btn btn-secondary">⬅ Back to Admin</a>
+    </div>
+
+</body>
+</html>

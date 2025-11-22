@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Profile</title>
+
+  <!-- Bootstrap 4.3 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --accent: #5A73D8;
+      --accent-2: #70C6E4;
+      --btn-grad-1: #ffd166;
+      --btn-grad-2: #f77f00;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      overflow-x: hidden;
+      color: #333;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      padding: 30px 18px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+      box-sizing: border-box;
+      z-index: 2;
+      min-height: 100vh;
+    }
+    .sidebar img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+    .sidebar h4 {
+      margin: 12px 0 6px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .sidebar p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .sidebar a {
+      margin-top: 8px;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+      font-weight: 600;
+      display: block;
+    }
+    .sidebar a:hover {
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 40px 30px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .profile-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      max-width: 600px;
+      width: 100%;
+      color: #212529;
+      text-align: left;
+    }
+
+    .profile-card h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .profile-card p {
+      margin: 0.5rem 0;
+      font-weight: 500;
+    }
+
+    .button-group {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .btn-custom {
+      border-radius: 30px;
+      font-weight: 600;
+      padding: 0.5rem 1.5rem;
+      transition: transform 0.3s ease;
+      margin: 0 0.5rem;
+    }
+    .btn-custom:hover {
+      transform: scale(1.05);
+    }
+    .btn-primary {
+      background-color: var(--accent);
+      border: none;
+      color: white;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 520px) {
+      .sidebar {
+        display: none;
+      }
+      .main {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Teacher Avatar" />
+    <h4>{{ teacher.teacher_id.first_name }} {{ teacher.teacher_id.last_name }}</h4>
+    <p>{{ teacher.department_id.department_name }}</p>
+
+    <a href="{% url 'teacher_profile_edit' %}">Edit Profile</a>
+    <a href="{% url 'log_out' %}" style="margin-top: 8px; border-color: #dc3545; color:#dc3545;">
+      Logout
+    </a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="profile-card">
+      <h2>Student Profile</h2>
+      <hr style="border-top: 2px solid var(--accent); width: 80%; margin: 0 auto 1.5rem;" />
+      {% for i in data %}
+        <p><strong>Name:</strong> {{ i.student_id.first_name }} {{ i.student_id.last_name }}</p>
+        <p><strong>Email:</strong> {{ i.student_id.email }}</p>
+        <p><strong>Department:</strong> {{ i.department_id.department_name }}</p>
+        <p><strong>Phone:</strong> {{ i.phone }}</p>
+        <p><strong>Age:</strong> {{ i.age }}</p>
+        <p><strong>Admission Number:</strong> {{ i.admission_number }}</p>
+      {% endfor %}
+      <div class="button-group">
+        <a href="{% url 'student_profile_edit' %}" class="btn btn-primary btn-custom">Edit Profile</a>
+        <a href="{% url 'log_out' %}" class="btn btn-danger btn-custom">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 4.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
